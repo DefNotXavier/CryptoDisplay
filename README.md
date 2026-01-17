@@ -33,7 +33,6 @@ RaspberryProject/
 ├── .env                    # API Keys (PRIVATE - Excluded from Git)
 ├── CMakeLists.txt          # Build configuration file
 ├── LICENSE                 # MIT License file
-├── Screenshot.png          # UI Preview
 ```
 
 ## Initial Setup (USB)
@@ -68,7 +67,7 @@ RaspberryProject/
 
 1. Download the Code (ZIP) from Github
 
-2. **IMPORTANT**: Unzip and move the folder to your Raspberry Pi Desktop and rename it exactly to: `RaspberryProject`
+2. **IMPORTANT**: Unzip and retrieve `RaspberryProject` folder, and place that on Raspberry Pi Desktop. Structure of this folder should follow structure above.
    - path must be: `/home/pi/Desktop/RaspberryProject/`
 3. Make sure Raspberry Pi is connected to `INTERNET`
 
