@@ -1,0 +1,19 @@
+{
+  "api_settings": {
+    "use_mock_data": false,
+    "coin_ids": ["bitcoin", "ethereum", "solana", "ripple", "cosmos"],
+    "update_interval_current_seconds": 450,
+    "update_interval_historic_seconds": 86400,
+    "api_delay_ms": 1000
+  },
+  "window_settings": {
+    "screenW": 1920,
+    "screenH": 1080,
+    "title": "Crypto Dashboard v1.0 powerd by CoinGecko"
+  },
+  "ui_colors": {
+    "header_color": [30, 30, 30, 255],
+    "row_bg_color": [20, 20, 20, 255],
+    "text_color_gold": [255, 203, 0, 255]
+  }
+}
