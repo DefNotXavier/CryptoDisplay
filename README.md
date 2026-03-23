@@ -7,6 +7,8 @@
 A high-performance, Raylib-based cryptocurrency dashboard for the Raspberry Pi. This project leverages the CoinGecko API to provide real-time market data with optimized polling intervals and features a custom hardware-abstracted trigger via USB for automatic lifecycle management.
 
 ![Example Display](Screenshot.png)
+![Example Display Front](PhysicalDisplay2.png)
+![Example Display Back](PhysicalDisplay1.png)
 
 ## Built With
 
