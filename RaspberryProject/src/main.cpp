@@ -18,6 +18,51 @@ float Normalize(float value, float min, float max) {
     return (value - min) / (max - min);
 }
 
+bool IsWifiConnected() {
+    // Pings Google's DNS Really never down
+    int result = system("ping -c 1 -W 2 8.8.8.8 > /dev/null 2>&1");
+    return result == 0;
+}
+
+bool ConnectToWifi(const string& ssid, const string& password, int retries, int delaySeconds) {
+
+    // Read existing config to avoid duplicates
+    ifstream checkFile("/etc/wpa_supplicant/wpa_supplicant.conf");
+    string fileContents((istreambuf_iterator<char>(checkFile)), istreambuf_iterator<char>());
+    checkFile.close();
+
+    // Only write if not already in there
+    if (fileContents.find("ssid=\"" + ssid + "\"") == string::npos) {
+        ofstream wpaConf("/etc/wpa_supplicant/wpa_supplicant.conf", ios::app);
+        if (wpaConf.is_open()) {
+            wpaConf << "\nnetwork={\n";
+            wpaConf << "    ssid=\"" << ssid << "\"\n";
+            wpaConf << "    psk=\"" << password << "\"\n";
+            wpaConf << "}\n";
+            wpaConf.close();
+        } else {
+            return false;
+        }
+    }
+
+    // Reload, disconnect, then reconnect to force a real connection attempt
+    system("sudo wpa_cli -i wlan0 reconfigure > /dev/null 2>&1");
+    this_thread::sleep_for(chrono::seconds(2));
+    system("sudo wpa_cli -i wlan0 disconnect > /dev/null 2>&1");
+    this_thread::sleep_for(chrono::seconds(1));
+    system("sudo wpa_cli -i wlan0 reconnect > /dev/null 2>&1");
+    this_thread::sleep_for(chrono::seconds(5));
+
+    for (int attempt = 1; attempt <= retries; attempt++) {
+        this_thread::sleep_for(chrono::seconds(delaySeconds));
+        if (IsWifiConnected()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 Texture2D LoadTextureFromURL(string url, string name) {
     string fileName = name + ".png";
     // Building a shell command using curl to dowload image from url and write it to a file
@@ -64,10 +109,79 @@ int main() {
     float historyInterval = config["api_settings"]["update_interval_historic_seconds"];
     int apiDelay = config["api_settings"]["api_delay_ms"];
 
+    // --- WiFi Check & Connect ---
+    string ssid     = config["wifi_settings"]["ssid"];
+    string password = config["wifi_settings"]["password"];
+    int retryAttempts   = config["wifi_settings"]["retry_attempts"];
+    int retryDelaySecs  = config["wifi_settings"]["retry_delay_seconds"];
+
     // WINDOW SETTINGS (Match the JSON keys)
     int screenW = config["window_settings"]["screenW"];
     int screenH = config["window_settings"]["screenH"];
     string title = config["window_settings"]["title"];
+
+    if (!IsWifiConnected()) {
+        bool connected = ConnectToWifi(ssid, password, retryAttempts, retryDelaySecs);
+        if (!connected) {
+            // Launch a simple error window
+            SetConfigFlags(FLAG_WINDOW_UNDECORATED);
+            InitWindow(screenW, screenH, "WiFi Error");
+            ToggleFullscreen();
+            HideCursor();
+            SetWindowPosition(0, 0);
+            SetTargetFPS(30);
+
+            while (!WindowShouldClose()) {
+                // check if usb is un plugged in error window as well
+                if (isUsingUsb) {
+                    static int errorFrameCounter = 0;
+                    if (++errorFrameCounter % 120 == 0) {
+                        if (!fs::exists(usbConfig)) {
+                            CloseWindow();
+                            return 0;
+                        }
+                    }
+                }
+
+                BeginDrawing();
+                    ClearBackground(BLACK);
+
+                    const char* errTitle = "NO WIFI CONNECTION";
+                    const char* errSub   = "Could not connect to network:";
+                    const char* errSSID  = ssid.c_str();
+                    const char* errHint  = "Check your config.json and restart.";
+
+                    int titleSize = screenH * 0.07f;
+                    int subSize   = screenH * 0.04f;
+
+                    // Centered error title in red
+                    DrawText(errTitle,
+                        screenW/2 - MeasureText(errTitle, titleSize)/2,
+                        screenH * 0.30f, titleSize, RED);
+
+                    // Subtitle
+                    DrawText(errSub,
+                        screenW/2 - MeasureText(errSub, subSize)/2,
+                        screenH * 0.50f, subSize, GRAY);
+
+                    // The SSID it tried
+                    DrawText(errSSID,
+                        screenW/2 - MeasureText(errSSID, subSize)/2,
+                        screenH * 0.58f, subSize, YELLOW);
+
+                    // Hint at the bottom
+                    DrawText(errHint,
+                        screenW/2 - MeasureText(errHint, subSize)/2,
+                        screenH * 0.75f, subSize, DARKGRAY);
+
+                EndDrawing();
+            }
+
+            CloseWindow();
+            return 0; 
+        }
+    }
+
 
     // COLORS (Match the JSON keys)
     Color color1 = { config["ui_colors"]["row_bg_color"][0], config["ui_colors"]["row_bg_color"][1], config["ui_colors"]["row_bg_color"][2], config["ui_colors"]["row_bg_color"][3] };
@@ -77,6 +191,9 @@ int main() {
     // Initialize the window & ignore title bar
     SetConfigFlags(FLAG_WINDOW_UNDECORATED);
     InitWindow(screenW,screenH, title.c_str());
+    ToggleFullscreen();
+    HideCursor();
+    SetWindowPosition(0, 0);
     SetTargetFPS(30);
 
     vector<Coin> data;
