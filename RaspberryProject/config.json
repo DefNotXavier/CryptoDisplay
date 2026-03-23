@@ -1,15 +1,21 @@
 {
   "api_settings": {
     "use_mock_data": false,
-    "coin_ids": ["bitcoin", "ethereum", "solana", "ripple", "cosmos"],
+    "coin_ids": ["bitcoin", "dogecoin", "solana", "ripple", "cosmos"],
     "update_interval_current_seconds": 450,
     "update_interval_historic_seconds": 86400,
     "api_delay_ms": 1000
   },
+  "wifi_settings": {
+    "ssid": "Enter your Wifi SSID HERE (NO SPACES)",
+    "password": "Enter Wifi password HERE (No SPACES)",
+    "retry_attempts": 6,
+    "retry_delay_seconds": 5
+  },
   "window_settings": {
-    "screenW": 1920,
-    "screenH": 1080,
-    "title": "Crypto Dashboard v1.0 powerd by CoinGecko"
+    "screenW": 1024,
+    "screenH": 600,
+    "title": "Crypto Dashboard v1.0 powered by CoinGecko"
   },
   "ui_colors": {
     "header_color": [30, 30, 30, 255],
