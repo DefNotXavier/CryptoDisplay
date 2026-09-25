@@ -1,0 +1,7 @@
+# Editor
+.vscode/
+
+# Version 1 - Raspberry Pi
+Version1/build/
+Version1/.env
+.env
