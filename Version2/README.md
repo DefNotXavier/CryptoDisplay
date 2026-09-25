@@ -1,4 +1,4 @@
-# Crypto Display V2 — XIAO Trigger
+# Crypto Display V2-XIAO
 
 > Part of [CryptoDisplay](../README.md). This is Version 2, the successor to
 > [Version 1](../Version1/README.md) (Raspberry Pi).
@@ -6,7 +6,9 @@
 A Seeed XIAO RP2040 that carries a self-contained crypto dashboard and launches it fullscreen on whatever computer you plug it into: a Windows PC or a Raspberry Pi / Linux desktop. Nothing gets installed on the host. The dashboard is a plain HTML/JS page, and every OS already ships a browser to run it in.
 
 ## Screenshot of interface
+
 ![Example Display](../docs/v2-screenshot.png)
+
 ## How it works
 
 The chip shows up on the host as **two USB devices at once**:
@@ -135,22 +137,22 @@ const CONFIG = {
 };
 ```
 
-| Setting | What it does |
-|---|---|
-| `title` | Text in the header bar |
-| `coin_ids` | Coins to show, top to bottom. Use the **API ID** from each coin's CoinGecko page (e.g. `bitcoin`, `ethereum`, `ripple` for XRP). About 5 fit the screen well. |
-| `update_interval_current_seconds` | How often prices refresh. 450 (7.5 min) stays well within CoinGecko's free limits. |
-| `update_interval_historic_seconds` | How often the sparkline charts refresh. 86400 = once a day. |
-| `api_delay_ms` | Pause between each coin's chart request. Raise it if a chart row comes up blank. |
-| `api_key` | Optional CoinGecko **Demo** API key. Leave `""` to use the public, more rate-limited API. |
-| `ui_colors` | Hex colors for the header, row backgrounds and accent text |
+| Setting                            | What it does                                                                                                                                                  |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `title`                            | Text in the header bar                                                                                                                                        |
+| `coin_ids`                         | Coins to show, top to bottom. Use the **API ID** from each coin's CoinGecko page (e.g. `bitcoin`, `ethereum`, `ripple` for XRP). About 5 fit the screen well. |
+| `update_interval_current_seconds`  | How often prices refresh. 450 (7.5 min) stays well within CoinGecko's free limits.                                                                            |
+| `update_interval_historic_seconds` | How often the sparkline charts refresh. 86400 = once a day.                                                                                                   |
+| `api_delay_ms`                     | Pause between each coin's chart request. Raise it if a chart row comes up blank.                                                                              |
+| `api_key`                          | Optional CoinGecko **Demo** API key. Leave `""` to use the public, more rate-limited API.                                                                     |
+| `ui_colors`                        | Hex colors for the header, row backgrounds and accent text                                                                                                    |
 
 ### Timing (in `code.py`)
 
-| Setting | Default | Raise it if… |
-|---|---|---|
-| `BOOT_SETTLE_SECONDS` | 5 | nothing types at all, especially when the chip is already plugged in while the host boots (use about 25 for a Pi cold boot) |
-| `WINDOW_OPEN_SECONDS` | 2 | the Run box / terminal opens but the typed command is cut off or lands elsewhere |
+| Setting               | Default | Raise it if…                                                                                                                |
+| --------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `BOOT_SETTLE_SECONDS` | 5       | nothing types at all, especially when the chip is already plugged in while the host boots (use about 25 for a Pi cold boot) |
+| `WINDOW_OPEN_SECONDS` | 2       | the Run box / terminal opens but the typed command is cut off or lands elsewhere                                            |
 
 ## Troubleshooting
 
